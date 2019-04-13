@@ -12,7 +12,7 @@ import { FeedPage } from '../pages/feed/feed';
 import firebase from 'firebase';
 
 var config = {
-  apiKey: "AIzaSyCWr3KRM2QPF7vYycpG_ai1jsXOk-8qWvk",
+  apiKey: "",
   authDomain: "feedly-c9292.firebaseapp.com",
   databaseURL: "https://feedly-c9292.firebaseio.com",
   projectId: "feedly-c9292",
