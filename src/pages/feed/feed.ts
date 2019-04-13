@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams, LoadingController, ToastController } from 'ionic-angular';
 import firebase from 'firebase';
 import moment from 'moment';
+import { LoginPage } from '../login/login';
 
 @Component({
   selector: 'page-feed',
@@ -16,24 +17,52 @@ export class FeedPage {
   infiniteEvent: any;
 
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private loadingCtrl: LoadingController, private toastCtrl: ToastController) {
     this.getPosts();
   }
 
   getPosts(){
-    //this.posts = [];
-    firebase.firestore().collection("posts")
+    this.posts = [];
+
+    let loading = this.loadingCtrl.create({
+      content: "Loading Feed..."
+    });
+    loading.present();
+
+    let query = firebase.firestore().collection("posts")
       .orderBy("created", "desc")
-      .limit(this.pageSize).get()
+      .limit(this.pageSize);
+      
+      // query.onSnapshot((snapshot) => {
+      //   let changedDocs = snapshot.docChanges();
+
+      //   changedDocs.forEach((change) => {
+      //     if(change.type == "added"){
+
+      //     }
+
+      //     if(change.type == "modified"){
+            
+      //     }
+
+      //     if(change.type == "removed"){
+            
+      //     }
+      //   })
+      // });
+
+      query.get()
       .then((docs) => {
 
         docs.forEach((doc) => {
           this.posts.push(doc);
         })
 
+        loading.dismiss();
+
         this.cursor = this.posts[this.posts.length - 1];
 
-        console.log(docs)
+        console.log(this.posts)
       }).catch((err) =>{
         console.log(err)
       })
@@ -65,7 +94,7 @@ export class FeedPage {
   }
 
   refresh(event){
-    this.posts = [];
+    //this.posts = [];
 
     this.getPosts();
     event.complete();
@@ -82,7 +111,14 @@ export class FeedPage {
       owner_name: firebase.auth().currentUser.displayName
     }).then((doc) => {
       console.log(doc)
-      this.getPosts()
+      this.text = "";
+
+      this.toastCtrl.create({
+        message: "Your post has been created.",
+        duration: 3000
+      }).present();
+
+      this.getPosts();
     }).catch((err) => {
       console.log(err)
     })
@@ -92,5 +128,19 @@ export class FeedPage {
   ago(time){
     let difference = moment(time).diff(moment());
     return moment.duration(difference).humanize();
+  }
+
+  logout(){
+    
+    firebase.auth().signOut().then(() => {
+
+      this.toastCtrl.create({
+        message: "You have been logged out.",
+        duration: 3000
+      }).present();
+
+      this.navCtrl.setRoot(LoginPage);
+    });
+    
   }
 }
