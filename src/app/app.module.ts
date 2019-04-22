@@ -11,19 +11,7 @@ import { FeedPage } from '../pages/feed/feed';
 
 import firebase from 'firebase';
 
-var config = {
-  apiKey: "",
-  authDomain: "feedly-c9292.firebaseapp.com",
-  databaseURL: "https://feedly-c9292.firebaseio.com",
-  projectId: "feedly-c9292",
-  storageBucket: "feedly-c9292.appspot.com",
-  messagingSenderId: "465803475589"
-};
 
-firebase.initializeApp(config);
-firebase.firestore().settings({
-  //timestampsInSnapshots: true
-})
 
 @NgModule({
   declarations: [
